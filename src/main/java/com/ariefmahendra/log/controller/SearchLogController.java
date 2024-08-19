@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 
 
 import java.util.LinkedList;
@@ -20,6 +21,7 @@ public class SearchLogController {
     public Button wrapButton;
     public ProgressIndicator progressIndicator;
     public Button searchBtn;
+    public TextField keyTxt;
 
 
     @FXML
@@ -30,9 +32,9 @@ public class SearchLogController {
 
     @FXML
     public void searchLog(ActionEvent actionEvent) {
-        Task<LinkedList<String>> task = new Task<>() {
+        Task<LinkedList<String> > task = new Task<>() {
             @Override
-            protected LinkedList<String> call() throws Exception {
+            protected LinkedList<String>  call() throws Exception {
                 progressIndicator.setVisible(true);
                 clearButton.setDisable(true);
                 wrapButton.setDisable(true);
@@ -40,11 +42,7 @@ public class SearchLogController {
                 logTextArea.setText("Loading...");
                 SearchLogService searchLogService = new SearchLogServiceImpl();
                 LinkedList<String> resultLog;
-                try {
-                    resultLog = searchLogService.searchLogByKeyword("hello");
-                }catch (GeneralException e){
-                    throw e;
-                }
+                resultLog = searchLogService.searchLogByKeyword(keyTxt.getText());
                 return resultLog;
             }
         };
@@ -56,10 +54,9 @@ public class SearchLogController {
             searchBtn.setDisable(false);
             LinkedList<String> logResultFiltered = task.getValue();
             logTextArea.clear();
-
-            for (String logEntry : logResultFiltered) {
-                logTextArea.appendText(logEntry + "\n");
-            }
+            logResultFiltered.forEach(log -> {
+                logTextArea.appendText(log + "\n");
+            });
         });
 
         task.setOnFailed(e -> {

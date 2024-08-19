@@ -1,4 +1,4 @@
-package com.ariefmahendra.log.dto;
+package com.ariefmahendra.log.shared.dto;
 
 import com.ariefmahendra.log.model.LogModel;
 import com.ariefmahendra.log.model.SftpModel;

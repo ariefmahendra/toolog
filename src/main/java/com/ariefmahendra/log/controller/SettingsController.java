@@ -1,6 +1,6 @@
 package com.ariefmahendra.log.controller;
 
-import com.ariefmahendra.log.dto.CredentialsDto;
+import com.ariefmahendra.log.shared.dto.CredentialsDto;
 import com.ariefmahendra.log.model.LogModel;
 import com.ariefmahendra.log.model.SftpModel;
 import com.ariefmahendra.log.service.SettingsService;
@@ -10,8 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.prefs.Preferences;
 
 public class SettingsController {
     public TextField hostTxt;

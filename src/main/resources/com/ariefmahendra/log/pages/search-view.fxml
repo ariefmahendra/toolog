@@ -22,7 +22,7 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="38.0" prefWidth="338.0" styleClass="search-panel">
                      <children>
-                        <TextField alignment="TOP_CENTER" prefHeight="25.0" prefWidth="267.0" promptText="Keywoard" styleClass="search-text-field" />
+                        <TextField fx:id="keyTxt" alignment="TOP_CENTER" prefHeight="25.0" prefWidth="267.0" promptText="Keywoard" styleClass="search-text-field" />
                         <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#searchLog" styleClass="search-button">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -1,6 +1,6 @@
 package com.ariefmahendra.log.service;
 
-import com.ariefmahendra.log.dto.CredentialsDto;
+import com.ariefmahendra.log.shared.dto.CredentialsDto;
 import com.ariefmahendra.log.exceptions.ConnectionException;
 import com.ariefmahendra.log.exceptions.SettingsNotValidException;
 import com.ariefmahendra.log.shared.util.Downloader;

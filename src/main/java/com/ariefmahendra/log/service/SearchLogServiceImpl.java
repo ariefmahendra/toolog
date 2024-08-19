@@ -1,8 +1,7 @@
 package com.ariefmahendra.log.service;
 
-import com.ariefmahendra.log.dto.CredentialsDto;
+import com.ariefmahendra.log.shared.dto.CredentialsDto;
 import com.ariefmahendra.log.exceptions.ConnectionException;
-import com.ariefmahendra.log.exceptions.GeneralException;
 import com.ariefmahendra.log.exceptions.SettingsNotValidException;
 import com.ariefmahendra.log.shared.util.Downloader;
 import com.ariefmahendra.log.shared.util.Network;
@@ -36,7 +35,7 @@ public class SearchLogServiceImpl implements SearchLogService {
     }
 
     @Override
-    public LinkedList<String> searchLogByKeyword(String keyword) throws GeneralException, SettingsNotValidException, ConnectionException {
+    public LinkedList<String> searchLogByKeyword(String keyword) throws SettingsNotValidException, ConnectionException {
         validateSettings();
 
         LinkedList<String> logResult;
@@ -88,28 +87,56 @@ public class SearchLogServiceImpl implements SearchLogService {
         return pathDownloaded;
     }
 
-    private LinkedList<String> filterLogByKeyword(String log, String keyword) {
-        LinkedList<String> filteredLog = new LinkedList<>();
-        String[] splitLog = log.split("\n");
+    private LinkedList<String> filterLogByKeyword(String logPayload, String keyword) {
+        LinkedList<String> resultLogFiltered = new LinkedList<>();
+        LinkedList<String> tempLog = new LinkedList<>();
+        String[] splitLog = logPayload.split("\n");
 
-        StringBuilder resultLogFiltered = new StringBuilder();
+        StringBuilder currentLog = new StringBuilder();
         boolean isStartWrite = false;
 
-        for (String logEntry : splitLog) {
-            if (logEntry.startsWith("Type")) {
-                isStartWrite = true;
-            } else if (logEntry.startsWith("DEBUG") || logEntry.startsWith("ERROR")) {
-                isStartWrite = false;
-                if (!resultLogFiltered.isEmpty()) {
-                    filteredLog.add(resultLogFiltered.toString());
-                }
-                resultLogFiltered = new StringBuilder();
-            }
+        for (String log : splitLog) {
             if (isStartWrite) {
-                resultLogFiltered.append(logEntry).append("\n");
+                if (log.startsWith("ERROR") || log.startsWith("INFO") || log.startsWith("DEBUG")) {
+                    tempLog.add(currentLog.toString());
+                    currentLog.setLength(0);
+                    isStartWrite = false;
+                } else {
+                    currentLog.append(log).append("\n");
+                }
+            } else if (log.startsWith("Type")) {
+                currentLog.append(log).append("\n");
+                isStartWrite = true;
             }
         }
 
-        return filteredLog;
+        tempLog.forEach(log -> {
+            if (log.toLowerCase().contains(keyword)) {
+                resultLogFiltered.add(log);
+            }
+        });
+
+        return separateLog(resultLogFiltered);
     }
+
+    private LinkedList<String> separateLog(LinkedList<String> logs) {
+        LinkedList<String> logSeparated = new LinkedList<>();
+        for (String log : logs) {
+            int start = log.indexOf("{");
+            int end = log.lastIndexOf("}") + 1;
+            String jsonContent = log.substring(start, end);
+
+            String prettyJsonFormater = Reader.prettyJsonFormater(jsonContent);
+
+            int startInfoPayload = 0;
+            int endInfoPayload = start - 1;
+            String infoPayload = log.substring(startInfoPayload, endInfoPayload);
+
+            logSeparated.add("================================================");
+            logSeparated.add(infoPayload);
+            logSeparated.add(prettyJsonFormater);
+        }
+        return logSeparated;
+    }
+
 }
