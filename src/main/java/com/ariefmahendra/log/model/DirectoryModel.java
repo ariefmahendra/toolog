@@ -5,11 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+import java.util.Date;
+
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
-public class LogModel {
+@NoArgsConstructor
+public class DirectoryModel {
     private String directory;
-    private String bufferSize;
+    private Date date;
+    private long size;
 }

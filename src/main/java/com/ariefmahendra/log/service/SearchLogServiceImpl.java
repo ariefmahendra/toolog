@@ -21,6 +21,7 @@ public class SearchLogServiceImpl implements SearchLogService {
     private final String USERNAME;
     private final String PASSWORD;
     private final int PORT;
+    private final int bufferSize;
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(SearchLogServiceImpl.class);
 
@@ -32,6 +33,7 @@ public class SearchLogServiceImpl implements SearchLogService {
         USERNAME = credentials.getSftp().getUsername();
         PASSWORD = credentials.getSftp().getPassword();
         PORT = Integer.parseInt(credentials.getSftp().getPort());
+        bufferSize = Integer.parseInt(credentials.getLog().getBufferSize());
     }
 
     @Override
@@ -48,7 +50,7 @@ public class SearchLogServiceImpl implements SearchLogService {
             sftpChannel.connect();
 
             String pathDownloaded = downloadLogFile();
-            Reader.readFileByCapacity(400000, pathDownloaded);
+            Reader.readFileByCapacity(bufferSize, pathDownloaded);
             String log = Reader.getResultLog();
             logResult = filterLogByKeyword(log, keyword);
         } catch (SftpException e) {
@@ -125,7 +127,6 @@ public class SearchLogServiceImpl implements SearchLogService {
             int start = log.indexOf("{");
             int end = log.lastIndexOf("}") + 1;
             String jsonContent = log.substring(start, end);
-
             String prettyJsonFormater = Reader.prettyJsonFormater(jsonContent);
 
             int startInfoPayload = 0;

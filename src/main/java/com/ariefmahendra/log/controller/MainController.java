@@ -7,14 +7,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class MainController {
-    public Pane contentArea;
-
+    public StackPane contentArea;
 
     public void showSearchPage(ActionEvent actionEvent) {
         FXMLLoader searchPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/search-view.fxml"));

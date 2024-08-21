@@ -1,6 +1,5 @@
 package com.ariefmahendra.log.controller;
 
-import com.ariefmahendra.log.exceptions.GeneralException;
 import com.ariefmahendra.log.service.SearchLogService;
 import com.ariefmahendra.log.service.SearchLogServiceImpl;
 import javafx.concurrent.Task;
@@ -54,9 +53,7 @@ public class SearchLogController {
             searchBtn.setDisable(false);
             LinkedList<String> logResultFiltered = task.getValue();
             logTextArea.clear();
-            logResultFiltered.forEach(log -> {
-                logTextArea.appendText(log + "\n");
-            });
+            logResultFiltered.forEach(log -> logTextArea.appendText(log + "\n"));
         });
 
         task.setOnFailed(e -> {

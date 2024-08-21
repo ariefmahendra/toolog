@@ -5,6 +5,7 @@ import com.ariefmahendra.log.exceptions.ConnectionException;
 import com.ariefmahendra.log.exceptions.SettingsNotValidException;
 import com.ariefmahendra.log.shared.util.Downloader;
 import com.ariefmahendra.log.shared.util.Network;
+import com.ariefmahendra.log.shared.util.Reader;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -21,6 +22,7 @@ public class LatestLogServiceImpl implements LatestLogService{
     private final String USERNAME;
     private final String PASSWORD;
     private final int PORT;
+    private final int bufferSize;
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(LatestLogServiceImpl.class);
 
@@ -32,6 +34,7 @@ public class LatestLogServiceImpl implements LatestLogService{
         USERNAME = credentials.getSftp().getUsername();
         PASSWORD = credentials.getSftp().getPassword();
         PORT = Integer.parseInt(credentials.getSftp().getPort());
+        bufferSize = Integer.parseInt(credentials.getLog().getBufferSize());
     }
 
     @Override
@@ -49,8 +52,8 @@ public class LatestLogServiceImpl implements LatestLogService{
             sftpChannel.connect();
 
             String pathDownloaded = downloadLogFile(LOG_FILE_PATH);
-
-            logEntries.append(readLogFile(pathDownloaded));
+            Reader.readFileByCapacity(bufferSize, pathDownloaded);
+            logEntries.append(Reader.getResultLog());
         } catch (SftpException e) {
             logger.error("Failed to connect or interact with SFTP server", e);
             throw new ConnectionException("Connection to sftp server error", e);
@@ -83,18 +86,4 @@ public class LatestLogServiceImpl implements LatestLogService{
         Downloader.downloadFileByThread(logFilePath, pathDownloaded);
         return pathDownloaded;
     }
-
-    private String readLogFile(String pathDownloaded) throws IOException {
-        logger.info("STARTING READ");
-        StringBuilder logEntries = new StringBuilder();
-        try (RandomAccessFile raf = new RandomAccessFile(pathDownloaded, "r")) {
-            raf.seek(raf.length() - 400000);
-            byte[] fileReaderByCapacity = new byte[400000];
-            raf.read(fileReaderByCapacity);
-            logEntries.append(new String(fileReaderByCapacity, StandardCharsets.UTF_8));
-        }
-        logger.info("END READ");
-        return logEntries.toString();
-    }
-
 }

@@ -25,7 +25,9 @@
                   <Label layoutX="63.0" layoutY="200.0" text="Default Folder" AnchorPane.leftAnchor="63.0" />
                   <TextField fx:id="defaultFolderTxt" layoutX="164.0" layoutY="197.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
                   <TextField fx:id="portTxt" layoutX="164.0" layoutY="162.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
-                  <Button fx:id="saveSettingsBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="434.0" layoutY="245.0" mnemonicParsing="false" onAction="#saveCredentials" prefHeight="43.0" prefWidth="103.0" text="Simpan" textAlignment="CENTER" AnchorPane.rightAnchor="62.8" AnchorPane.topAnchor="245.0" />
+                  <Label layoutX="61.0" layoutY="240.0" text="Buffer Size" />
+                  <Button fx:id="saveSettingsBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="462.0" layoutY="276.0" mnemonicParsing="false" onAction="#saveCredentials" prefHeight="30.0" prefWidth="75.0" styleClass="save-btn-settings" stylesheets="@../assets/css/style.css" text="Simpan" textAlignment="CENTER" AnchorPane.rightAnchor="62.799999999999955" AnchorPane.topAnchor="276.0" />
+                  <TextField fx:id="bufferSizeTxt" layoutX="164.0" layoutY="236.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
                </children>
             </AnchorPane>
          </center>

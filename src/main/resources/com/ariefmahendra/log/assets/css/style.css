@@ -133,7 +133,7 @@
 }
 
 .scroll-bar:horizontal {
-    -fx-pref-height: 15px;
+    -fx-pref-width: 15px;
 }
 
 .scroll-bar:horizontal .track,
@@ -203,4 +203,27 @@
     -fx-animated: true;
     -fx-font-weight: bold;
     -fx-padding: 5px;
+}
+
+.save-btn-settings {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-animated: true;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.save-btn-settings:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+    -fx-cursor: hand;
+}
+
+.save-btn-settings:focused {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
 }

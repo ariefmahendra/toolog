@@ -33,7 +33,6 @@ public class Reader {
     }
 
     public static String prettyJsonFormater(String json) {
-        System.out.println(json);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonElement je = JsonParser.parseString(json);
         return gson.toJson(je);

@@ -4,5 +4,5 @@ import com.ariefmahendra.log.exceptions.ConnectionException;
 import com.ariefmahendra.log.exceptions.SettingsNotValidException;
 
 public interface LatestLogService {
-    public String getLatestLog() throws SettingsNotValidException, ConnectionException;
+    String getLatestLog() throws SettingsNotValidException, ConnectionException;
 }
