@@ -17,23 +17,6 @@
          <left>
             <VBox alignment="TOP_CENTER" prefHeight="494.0" prefWidth="90.0" spacing="5.0" styleClass="sidebar" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" onAction="#showHomePage" prefHeight="50.0" prefWidth="80.0">
-                     <graphic>
-                        <VBox alignment="CENTER" prefHeight="48.0" prefWidth="72.0">
-                           <children>
-                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@assets/icon/home.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="19.0" prefWidth="73.0" styleClass="label-button" text="Home" />
-                           </children>
-                        </VBox>
-                     </graphic>
-                     <VBox.margin>
-                        <Insets top="10.0" />
-                     </VBox.margin>
-                  </Button>
                   <Button mnemonicParsing="false" onAction="#showSearchPage" prefHeight="50.0" prefWidth="80.0">
                      <graphic>
                         <VBox alignment="CENTER" prefHeight="48.0" prefWidth="72.0">
@@ -71,20 +54,6 @@
                                  </image>
                               </ImageView>
                               <Label prefHeight="19.0" prefWidth="73.0" styleClass="label-button" text="List File" />
-                           </children>
-                        </VBox>
-                     </graphic>
-                  </Button>
-                  <Button mnemonicParsing="false" onAction="#showDownloadPage" prefHeight="50.0" prefWidth="80.0">
-                     <graphic>
-                        <VBox alignment="CENTER" prefHeight="48.0" prefWidth="72.0">
-                           <children>
-                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@assets/icon/download.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="19.0" prefWidth="73.0" styleClass="label-button" text="Download" />
                            </children>
                         </VBox>
                      </graphic>

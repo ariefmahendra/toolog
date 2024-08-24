@@ -6,7 +6,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -18,23 +17,17 @@ public class MainController {
 
     public void showSearchPage(ActionEvent actionEvent) {
         FXMLLoader searchPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/search-view.fxml"));
-
         loadChildren(searchPage);
     }
 
     public void showLatestPage(ActionEvent actionEvent) {
-        FXMLLoader searchPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/latest-view.fxml"));
-        loadChildren(searchPage);
+        FXMLLoader latestPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/latest-view.fxml"));
+        loadChildren(latestPage);
     }
 
     public void showListPage(ActionEvent actionEvent) {
-        FXMLLoader searchPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/file-view.fxml"));
-        loadChildren(searchPage);
-    }
-
-    public void showDownloadPage(ActionEvent actionEvent) {
-        FXMLLoader searchPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/download-view.fxml"));
-        loadChildren(searchPage);
+        FXMLLoader filePage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/file-view.fxml"));
+        loadChildren(filePage);
     }
 
     public void showSettingsPage(ActionEvent actionEvent) {
@@ -65,17 +58,11 @@ public class MainController {
         }
     }
 
-    public void showHomePage(ActionEvent actionEvent) {
-        FXMLLoader searchPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/home-view.fxml"));
-        loadChildren(searchPage);
-    }
-
-    private void loadChildren(FXMLLoader searchPage) {
+    private void loadChildren(FXMLLoader page) {
         try {
-            Parent root = searchPage.load();
+            Parent root = page.load();
 
             // Clear existing children and add the new root node
-            contentArea.getChildren().clear();
             contentArea.getChildren().add(root);
 
             // Set anchors for the root node

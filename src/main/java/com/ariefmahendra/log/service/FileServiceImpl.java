@@ -14,10 +14,7 @@ import com.jcraft.jsch.SftpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class FileServiceImpl implements FileService {
 
@@ -52,9 +49,12 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public ListFileOrDirDto getDir() throws ConnectionException, SettingsNotValidException {
+    public ListFileOrDirDto getDir(Optional<String> currentPath) throws ConnectionException, SettingsNotValidException {
         validateCredentials();
-        return loadDir(LOG_FILE_PATH);
+        if (currentPath.isEmpty()) {
+            return loadDir(LOG_FILE_PATH);
+        }
+        return loadDir(currentPath.get());
     }
 
     @Override

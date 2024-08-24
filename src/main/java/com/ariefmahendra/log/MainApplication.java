@@ -1,5 +1,6 @@
 package com.ariefmahendra.log;
 
+import com.ariefmahendra.log.controller.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,6 +21,9 @@ public class MainApplication extends Application {
         stage.setTitle("Log Application");
         stage.setScene(scene);
         stage.show();
+
+        MainController mainController = new MainController();
+        mainController.showSearchPage(null);
     }
 
     public static void main(String[] args) {
