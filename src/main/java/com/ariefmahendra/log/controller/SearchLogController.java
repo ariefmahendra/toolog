@@ -11,7 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 
-import java.util.LinkedList;
+import java.util.List;
 
 public class SearchLogController {
     @FXML
@@ -31,18 +31,16 @@ public class SearchLogController {
 
     @FXML
     public void searchLog(ActionEvent actionEvent) {
-        Task<LinkedList<String> > task = new Task<>() {
+        Task<List<String>> task = new Task<>() {
             @Override
-            protected LinkedList<String>  call() throws Exception {
+            protected List<String>  call() throws Exception {
                 progressIndicator.setVisible(true);
                 clearButton.setDisable(true);
                 wrapButton.setDisable(true);
                 searchBtn.setDisable(true);
                 logTextArea.setText("Loading...");
                 LogService searchLogService = new LogServiceImpl();
-                LinkedList<String> resultLog;
-                resultLog = searchLogService.searchLogByKeyword(keyTxt.getText());
-                return resultLog;
+                return searchLogService.searchLogByKeyword(keyTxt.getText());
             }
         };
 
@@ -51,7 +49,7 @@ public class SearchLogController {
             clearButton.setDisable(false);
             wrapButton.setDisable(false);
             searchBtn.setDisable(false);
-            LinkedList<String> logResultFiltered = task.getValue();
+            List<String> logResultFiltered = task.getValue();
             logTextArea.clear();
             logResultFiltered.forEach(log -> logTextArea.appendText(log + "\n"));
         });
