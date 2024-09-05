@@ -1,6 +1,7 @@
 package com.ariefmahendra.log;
 
 import com.ariefmahendra.log.controller.MainController;
+import com.ariefmahendra.log.shared.util.Network;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -21,6 +22,11 @@ public class MainApplication extends Application {
         stage.setTitle("Log Application");
         stage.setScene(scene);
         stage.show();
+
+        stage.setOnCloseRequest(event -> {
+            Network.disconnect();
+            System.exit(0);
+        });
 
         MainController mainController = new MainController();
         mainController.showSearchPage(null);

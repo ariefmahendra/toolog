@@ -1,19 +1,73 @@
 package com.ariefmahendra.log.shared.util;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
 public class Network {
 
-    private static final int THREAD_COUNT = Runtime.getRuntime().availableProcessors() + 4;
+    private static Session session;
+
+    private static final Logger logger = LoggerFactory.getLogger(Network.class);
 
     public static Session setupJsch(String username, String remoteHost, String password, int port) throws JSchException {
+        if (session != null){
+            return session;
+        }
+
         JSch jsch = new JSch();
-        Session jschSession = jsch.getSession(username, remoteHost, port);
-        jschSession.setPassword(password);
-        jschSession.setConfig("StrictHostKeyChecking","no");
-        jschSession.connect();
-        return jschSession;
+        session = jsch.getSession(username, remoteHost, port);
+        session.setPassword(password);
+        session.setConfig("StrictHostKeyChecking","no");
+        session.connect();
+        return session;
+    }
+
+    public static void disconnect() {
+        if (session != null) {
+            if (session.isConnected()) {
+                try {
+                    session.disconnect();
+                    log.info("session disconnect successfully");
+                } catch (Exception e) {
+                    log.error("JSch session disconnect error:", e);
+                }
+            }
+        }
+    }
+
+    public static List<String> remoteExecCommand(String command) throws JSchException, IOException {
+        List<String> resultLine = new ArrayList<>();
+        ChannelExec channel;
+        try {
+            channel = (ChannelExec) session.openChannel("exec");
+            channel.setCommand(command);
+            InputStream input = channel.getInputStream();
+            channel.connect();
+            try {
+                BufferedReader inputReader = new BufferedReader(new InputStreamReader(input));
+                String inputLine;
+                while ((inputLine = inputReader.readLine()) != null) {
+                    resultLine.add(inputLine);
+                }
+            } finally {
+                if (input != null){
+                    try {
+                        input.close();
+                    } catch (Exception e){
+                        logger.error("Failed to close input stream", e);
+                    }
+                }
+            }
+        } catch (IOException e){
+            logger.error("IO Exception : ", e);
+        }
+        return resultLine;
     }
 }

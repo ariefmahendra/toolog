@@ -26,7 +26,7 @@ public class FileServiceImpl implements FileService {
     private static ChannelSftp sftpChannel = null;
     private static Session session = null;
 
-    private static final Logger logger = LoggerFactory.getLogger(LatestLogServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
     public FileServiceImpl() throws ConnectionException {
         SettingsService settingsService = new SettingsServiceImpl();

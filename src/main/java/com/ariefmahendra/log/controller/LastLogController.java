@@ -1,7 +1,7 @@
 package com.ariefmahendra.log.controller;
 
-import com.ariefmahendra.log.service.LatestLogService;
-import com.ariefmahendra.log.service.LatestLogServiceImpl;
+import com.ariefmahendra.log.service.LogService;
+import com.ariefmahendra.log.service.LogServiceImpl;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
@@ -28,7 +28,7 @@ public class LastLogController {
                 clearButton.setDisable(true);
                 progressIndicator.setVisible(true);
                 logTextArea.setText("Loading...");
-                LatestLogService latestLogService = new LatestLogServiceImpl();
+                LogService latestLogService = new LogServiceImpl();
                 return latestLogService.getLatestLog();                }
         };
 
@@ -39,6 +39,8 @@ public class LastLogController {
             progressIndicator.setVisible(false);
             String latestLog = task.getValue();
             logTextArea.setText(latestLog);
+            logTextArea.appendText("");
+            logTextArea.setScrollTop(Double.MAX_VALUE);
         });
 
         task.setOnFailed(e -> {

@@ -1,7 +1,7 @@
 package com.ariefmahendra.log.controller;
 
-import com.ariefmahendra.log.service.SearchLogService;
-import com.ariefmahendra.log.service.SearchLogServiceImpl;
+import com.ariefmahendra.log.service.LogService;
+import com.ariefmahendra.log.service.LogServiceImpl;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,7 +39,7 @@ public class SearchLogController {
                 wrapButton.setDisable(true);
                 searchBtn.setDisable(true);
                 logTextArea.setText("Loading...");
-                SearchLogService searchLogService = new SearchLogServiceImpl();
+                LogService searchLogService = new LogServiceImpl();
                 LinkedList<String> resultLog;
                 resultLog = searchLogService.searchLogByKeyword(keyTxt.getText());
                 return resultLog;
