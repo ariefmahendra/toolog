@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
@@ -16,18 +17,15 @@ public class MainController {
     public StackPane contentArea;
 
     public void showSearchPage(ActionEvent actionEvent) {
-        FXMLLoader searchPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/search-view.fxml"));
-        loadChildren(searchPage);
+        showSearch();
     }
 
     public void showLatestPage(ActionEvent actionEvent) {
-        FXMLLoader latestPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/latest-view.fxml"));
-        loadChildren(latestPage);
+        showLatest();
     }
 
     public void showListPage(ActionEvent actionEvent) {
-        FXMLLoader filePage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/file-view.fxml"));
-        loadChildren(filePage);
+        showDirectory();
     }
 
     public void showSettingsPage(ActionEvent actionEvent) {
@@ -74,5 +72,21 @@ public class MainController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void showSearch(){
+        FXMLLoader searchPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/search-view.fxml"));
+        loadChildren(searchPage);
+    }
+
+    private void showLatest(){
+        FXMLLoader latestPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/latest-view.fxml"));
+        loadChildren(latestPage);
+    }
+
+    private void showDirectory(){
+        FXMLLoader filePage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/file-view.fxml"));
+        loadChildren(filePage);
     }
 }

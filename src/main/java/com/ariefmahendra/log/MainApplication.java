@@ -23,7 +23,7 @@ public class MainApplication extends Application {
             System.exit(0);
         });
 
-        MainController mainController = new MainController();
+        MainController mainController = fxmlLoader.getController();
         mainController.showSearchPage(null);
     }
 

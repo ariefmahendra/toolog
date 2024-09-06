@@ -5,12 +5,13 @@ import com.ariefmahendra.log.service.LogServiceImpl;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseEvent;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchLogController {
@@ -22,6 +23,7 @@ public class SearchLogController {
     public Button searchBtn;
     public TextField keyTxt;
 
+    private List<int[]> selectedRanges = new ArrayList<>();
 
     @FXML
     public void clearLog(ActionEvent actionEvent) {
@@ -52,6 +54,7 @@ public class SearchLogController {
             List<String> logResultFiltered = task.getValue();
             logTextArea.clear();
             logResultFiltered.forEach(log -> logTextArea.appendText(log + "\n"));
+            logTextArea.setScrollTop(Double.MAX_VALUE);
         });
 
         task.setOnFailed(e -> {
@@ -64,6 +67,25 @@ public class SearchLogController {
         });
 
         new Thread(task).start();
+    }
+
+    public void initialize(){
+        logTextArea.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.isControlDown()){
+                int caretPosition = logTextArea.getCaretPosition();
+                logTextArea.getCursor();
+                String text = logTextArea.getText();
+
+                int start, end;
+                start = text.lastIndexOf("\n\n", caretPosition - 1);
+                end = text.indexOf("\n\n", caretPosition);
+
+                if (start == -1) start = 0;
+                if (end == -1) end = text.length();
+
+                logTextArea.selectRange(start, end);
+            }
+        });
     }
 
     public void wrapLog(ActionEvent actionEvent) {

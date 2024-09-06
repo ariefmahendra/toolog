@@ -4,10 +4,9 @@ import com.ariefmahendra.log.service.LogService;
 import com.ariefmahendra.log.service.LogServiceImpl;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.text.Font;
 
 
 public class LastLogController {
