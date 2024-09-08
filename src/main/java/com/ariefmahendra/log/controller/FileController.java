@@ -37,6 +37,7 @@ public class FileController {
 
     private static String currentPath;
     private static String selectedFile;
+    private static String parentPath;
     private static Task<ListFileOrDirDto> task;
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
@@ -62,9 +63,10 @@ public class FileController {
                     Task<ListFileOrDirDto> nextDirTask = new Task<>() {
                         @Override
                         protected ListFileOrDirDto call() throws Exception {
-                            logger.debug("currentPath = {}", path);
+                            String nextPath = path + "/";
+                            currentPath = nextPath;
                             FileService fileService = new FileServiceImpl();
-                            return fileService.getNextDir(path + "/");
+                            return fileService.getNextDir(nextPath);
                         }
                     };
 
@@ -76,7 +78,8 @@ public class FileController {
                     nextDirTask.setOnFailed(event -> {
                         progressIndicator.setVisible(false);
                         tableView.setDisable(false);
-                        Alert alert = new Alert(Alert.AlertType.ERROR, "Error Cause = " + nextDirTask.getMessage());
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "Error Cause = " + task.getException().getMessage());
+                        task.getException().printStackTrace();
                         alert.showAndWait();
                     });
 
@@ -85,15 +88,7 @@ public class FileController {
                         tableView.setDisable(false);
                         ListFileOrDirDto result = nextDirTask.getValue();
                         tableView.getItems().clear();
-                        if (result.getFiles().isEmpty()) {
-                            if (!result.getDirectories().isEmpty()) {
-                                currentPath = result.getDirectories().get(0).getDirectory();
-                            }
-                        } else {
-                            currentPath = result.getFiles().get(0).getDirectory();
-                        }
-                        logger.debug("current Path = {}", currentPath);
-
+                        parentPath = result.getParentPath();
                         ObservableList<FileOrDirModel> items = FXCollections.observableArrayList();
                         items.addAll(result.getDirectories().stream()
                                 .map(dir -> new FileOrDirModel("Directory", dir.getDirectory(), dir.getDirectory(), dir.getDate().toString()))
@@ -116,21 +111,9 @@ public class FileController {
             Task<ListFileOrDirDto> backDirTask = new Task<>() {
                 @Override
                 protected ListFileOrDirDto call() throws Exception {
-                    long count = currentPath.chars().filter(c -> c == '/').count();
-                    if (count == 1) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING, "This is root directory");
-                        alert.showAndWait();
-                    }
-                    int i = currentPath.lastIndexOf("/");
-                    String lastPath;
-                    if (i == 1) {
-                        lastPath = "/";
-                    } else {
-                        lastPath = currentPath.substring(0, currentPath.lastIndexOf("/"));
-                    }
-                    logger.debug("lastPath = {}", lastPath);
+                    currentPath = parentPath;
                     FileService fileService = new FileServiceImpl();
-                    return fileService.getBackDir(lastPath);
+                    return fileService.getBackDir(parentPath);
                 }
             };
 
@@ -142,7 +125,8 @@ public class FileController {
             backDirTask.setOnFailed(event -> {
                 progressIndicator.setVisible(false);
                 tableView.setDisable(false);
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Error Cause = " + backDirTask.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Error Cause = " + task.getException().getMessage());
+                task.getException().printStackTrace();
                 alert.showAndWait();
             });
 
@@ -151,11 +135,7 @@ public class FileController {
                 tableView.setDisable(false);
                 ListFileOrDirDto result = backDirTask.getValue();
                 tableView.getItems().clear();
-                if (result.getFiles().isEmpty()) {
-                    currentPath = result.getDirectories().get(0).getDirectory();
-                } else {
-                    currentPath = result.getFiles().get(0).getDirectory();
-                }
+                parentPath = result.getParentPath();
                 ObservableList<FileOrDirModel> items = FXCollections.observableArrayList();
                 items.addAll(result.getDirectories().stream()
                         .map(dir -> new FileOrDirModel("Directory", dir.getDirectory(), dir.getDirectory(), dir.getDate().toString()))
@@ -207,7 +187,8 @@ public class FileController {
             tableView.setDisable(false);
             backBtn.setDisable(false);
             sortingBtn.setDisable(false);
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Error Cause = " + task.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Error Cause = " + task.getException().getMessage());
+            task.getException().printStackTrace();
             alert.showAndWait();
         });
 
@@ -218,6 +199,8 @@ public class FileController {
             tableView.setDisable(false);
             ListFileOrDirDto result = task.getValue();
             ObservableList<FileOrDirModel> items = FXCollections.observableArrayList();
+
+            parentPath = result.getParentPath();
 
             if (!result.getFiles().isEmpty()) {
                 currentPath = result.getFiles().get(0).getDirectory();
@@ -259,7 +242,7 @@ public class FileController {
             Stage primaryStage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
             modalStage.initOwner(primaryStage);
             VBox vbox = new VBox(5);
-            vbox.setStyle("-fx-padding: 5; -fx-alignment: left-top;");
+            vbox.setStyle("-fx-padding: 5;");
 
             TextField fileNameTxt = new TextField(name);
             fileNameTxt.setEditable(false);
@@ -282,7 +265,6 @@ public class FileController {
             latestLogBtn.setOnAction(event -> {
                 MainController mainController = new MainController();
                 mainController.showLatestPage(event);
-
                 modalStage.close();
             });
 

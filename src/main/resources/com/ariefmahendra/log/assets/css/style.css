@@ -27,11 +27,6 @@
     -fx-cursor: hand;
 }
 
-.button:focused {
-    -fx-background-color: #ffffff;
-    -fx-text-fill: black;
-}
-
 .label-button {
     -fx-text-fill: black;
     -fx-font-weight: bold;

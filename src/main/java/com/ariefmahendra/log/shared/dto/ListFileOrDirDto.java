@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -14,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ListFileOrDirDto {
-    private List<FileModel> files;
-    private List<DirectoryModel> directories;
+    private List<FileModel> files = new ArrayList<>();
+    private List<DirectoryModel> directories = new ArrayList<>();
+    private String parentPath;
 }

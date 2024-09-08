@@ -4,7 +4,6 @@ import com.ariefmahendra.log.shared.dto.CredentialsDto;
 import com.ariefmahendra.log.exceptions.ConnectionException;
 import com.ariefmahendra.log.exceptions.SettingsNotValidException;
 import com.ariefmahendra.log.shared.util.Network;
-import com.ariefmahendra.log.shared.util.Reader;
 import com.jcraft.jsch.*;
 import org.slf4j.Logger;
 
@@ -127,5 +126,4 @@ public class LogServiceImpl implements LogService {
             throw new SettingsNotValidException("Please set your credentials first, then try again.");
         }
     }
-
 }
