@@ -2,8 +2,12 @@ package com.ariefmahendra.log.controller;
 
 import com.ariefmahendra.log.model.DirectoryModel;
 import com.ariefmahendra.log.model.FileModel;
+import com.ariefmahendra.log.model.LogModel;
 import com.ariefmahendra.log.service.FileService;
 import com.ariefmahendra.log.service.FileServiceImpl;
+import com.ariefmahendra.log.service.SettingsService;
+import com.ariefmahendra.log.service.SettingsServiceImpl;
+import com.ariefmahendra.log.shared.dto.CredentialsDto;
 import com.ariefmahendra.log.shared.dto.ListFileOrDirDto;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -47,7 +51,8 @@ public class FileController {
         dirCol.setCellValueFactory(cellData -> cellData.getValue().directoryProperty());
         dateCol.setCellValueFactory(cellData -> cellData.getValue().dateProperty());
 
-        loadDir();
+        FileService fileService = new FileServiceImpl();
+        loadDir(fileService);
 
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getClickCount() == 2) {
@@ -65,7 +70,6 @@ public class FileController {
                         protected ListFileOrDirDto call() throws Exception {
                             String nextPath = path + "/";
                             currentPath = nextPath;
-                            FileService fileService = new FileServiceImpl();
                             return fileService.getNextDir(nextPath);
                         }
                     };
@@ -78,9 +82,14 @@ public class FileController {
                     nextDirTask.setOnFailed(event -> {
                         progressIndicator.setVisible(false);
                         tableView.setDisable(false);
-                        Alert alert = new Alert(Alert.AlertType.ERROR, "Error Cause = " + task.getException().getMessage());
-                        task.getException().printStackTrace();
-                        alert.showAndWait();
+                        Throwable exception = task.getException();
+                        if (exception != null) {
+                            exception.printStackTrace();
+                            Alert alert = new Alert(Alert.AlertType.ERROR, "Error to next directory");
+                            alert.showAndWait();
+                        } else {
+                            System.out.println("Task failed but no exception was thrown.");
+                        }
                     });
 
                     nextDirTask.setOnSucceeded(event -> {
@@ -112,7 +121,6 @@ public class FileController {
                 @Override
                 protected ListFileOrDirDto call() throws Exception {
                     currentPath = parentPath;
-                    FileService fileService = new FileServiceImpl();
                     return fileService.getBackDir(parentPath);
                 }
             };
@@ -154,23 +162,22 @@ public class FileController {
 
         sortingBtn.setOnAction(event -> {
             if (sortingBtn.getText().equals("Sorting by Date")) {
-                loadDir();
+                loadDir(fileService);
                 sortingBtn.setText("Dont Sorting");
                 return;
             }
 
             if (sortingBtn.getText().equals("Dont Sorting")) {
-                loadDir();
+                loadDir(fileService);
                 sortingBtn.setText("Sorting by Date");
             }
         });
     }
 
-    private void loadDir(){
+    private void loadDir(FileService fileService){
         task = new Task<>() {
             @Override
             protected ListFileOrDirDto call() throws Exception {
-                FileService fileService = new FileServiceImpl();
                 return fileService.getDir(Optional.ofNullable(currentPath));
             }
         };
@@ -263,9 +270,30 @@ public class FileController {
             vbox.getChildren().addAll(fileNameTxt, latestLogBtn, searchByKeyBtn, setDefaultFileTxt, downloadFileBtn);
 
             latestLogBtn.setOnAction(event -> {
-                MainController mainController = new MainController();
-                mainController.showLatestPage(event);
-                modalStage.close();
+                // Todo: show latest log page and passing path file to latest log page
+            });
+
+            searchByKeyBtn.setOnAction(event -> {
+                // Todo: show search log page and passing path file to latest log page
+            });
+
+            setDefaultFileTxt.setOnAction(event -> {
+                // Todo: set default file path
+                SettingsService settingsService = new SettingsServiceImpl();
+                CredentialsDto credentials = settingsService.getCredentials();
+
+                String fullPath = currentPath + name;
+
+                LogModel log = credentials.getLog();
+                log.setDirectory(fullPath);
+
+                settingsService.settingCredentials(log, credentials.getSftp());
+                Alert successAlert = new Alert(Alert.AlertType.INFORMATION, "Success");
+                successAlert.showAndWait();
+            });
+
+            downloadFileBtn.setOnAction(event -> {
+                // Todo: download file by threading
             });
 
             Scene scene = new Scene(vbox, 200, 160);

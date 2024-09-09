@@ -61,7 +61,9 @@ public class MainController {
             Parent root = page.load();
 
             // Clear existing children and add the new root node
-            contentArea.getChildren().add(root);
+            if (contentArea != null){
+                contentArea.getChildren().add(root);
+            }
 
             // Set anchors for the root node
             AnchorPane.setTopAnchor(root, 0.0);

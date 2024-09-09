@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 import static com.ariefmahendra.log.shared.util.Reader.prettyJsonFormater;
 
 public class LogServiceImpl implements LogService {
-    private  String LOG_FILE_PATH;
-    private  String HOST;
-    private  String USERNAME;
-    private  String PASSWORD;
-    private  int PORT;
-    private  int bufferSize;
+    private final String LOG_FILE_PATH;
+    private final String HOST;
+    private final String USERNAME;
+    private final String PASSWORD;
+    private final int PORT;
+    private final int bufferSize;
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(LogServiceImpl.class);
 
@@ -45,7 +45,7 @@ public class LogServiceImpl implements LogService {
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
             channel.connect();
 
-            // todo: refactor business logic with command tail
+            // Todo: refactor business logic with command tail
             String command = String.format("tail -n %d %s", bufferSize, LOG_FILE_PATH);
             logEntries = Network.remoteExecCommand(command).stream().map(line -> line + "\n").collect(Collectors.joining());
         } catch (JSchException e){
@@ -71,14 +71,14 @@ public class LogServiceImpl implements LogService {
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
             channel.connect();
 
-            // todo: refactor business logic with command tail
+            // Todo: refactor business logic with command tail
             String command = String.format("tail -n %d %s", bufferSize, LOG_FILE_PATH);
             List<String> logEntriesPerLine = Network.remoteExecCommand(command);
 
             boolean isWrite = false;
             StringBuilder logSb = new StringBuilder();
 
-            // todo: filter log entries only get request and response message
+            // Todo: filter log entries only get request and response message
             for (String log : logEntriesPerLine) {
                 if (log.startsWith("Type")){
                     isWrite = true;

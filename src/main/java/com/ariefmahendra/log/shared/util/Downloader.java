@@ -93,7 +93,6 @@ public class Downloader {
 
             executor.shutdown();
 
-
             // merge chunks into the final file
             try (FileOutputStream fos = new FileOutputStream(pathDownloaded, true)) {
                 for (int i = 0; i < THREAD_COUNT; i++){

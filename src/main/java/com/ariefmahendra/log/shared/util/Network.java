@@ -34,9 +34,8 @@ public class Network {
             if (session.isConnected()) {
                 try {
                     session.disconnect();
-                    log.info("session disconnect successfully");
                 } catch (Exception e) {
-                    log.error("JSch session disconnect error:", e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -61,13 +60,25 @@ public class Network {
                     try {
                         input.close();
                     } catch (Exception e){
-                        logger.error("Failed to close input stream", e);
+                        e.printStackTrace();
                     }
                 }
             }
         } catch (IOException e){
-            logger.error("IO Exception : ", e);
+            e.printStackTrace();
         }
         return resultLine;
+    }
+
+    public static boolean isConnected() {
+        return session != null && session.isConnected();
+    }
+
+    public static void resetSession() {
+        if (session != null && session.isConnected()) {
+            disconnect();
+        }
+        session = null;
+        logger.info("Session has been reset successfully.");
     }
 }

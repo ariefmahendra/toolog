@@ -17,44 +17,26 @@ import java.util.prefs.Preferences;
 
 public class FileServiceImpl implements FileService {
 
-    private final String LOG_FILE_PATH;
-    private final String HOST;
-    private final String USERNAME;
-    private final String PASSWORD;
-    private final int PORT;
-    private static ChannelSftp sftpChannel = null;
-    private static Session session = null;
+    private String LOG_FILE_PATH;
+    private String HOST;
+    private String USERNAME;
+    private String PASSWORD;
+    private int PORT;
 
     private String currentDirectory;
 
     private static final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
-    public FileServiceImpl() throws ConnectionException {
-        SettingsService settingsService = new SettingsServiceImpl();
-        CredentialsDto credentials = settingsService.getCredentials();
-        LOG_FILE_PATH = credentials.getLog().getDirectory();
-        HOST = credentials.getSftp().getRemoteHost();
-        USERNAME = credentials.getSftp().getUsername();
-        PASSWORD = credentials.getSftp().getPassword();
-        PORT = Integer.parseInt(credentials.getSftp().getPort());
-
+    public FileServiceImpl() {
         // currentDirectory = Preferences.userNodeForPackage(FileServiceImpl.class).get("currentDirectory", "/");
         currentDirectory = "/";
-
-        if (session == null || sftpChannel == null)  {
-            try {
-                session = Network.setupJsch(USERNAME, HOST, PASSWORD, PORT);
-                sftpChannel = (ChannelSftp) session.openChannel("sftp");
-                sftpChannel.connect();
-            } catch (JSchException e) {
-                throw new ConnectionException("Connection to sftp server error", e);
-            }
-        }
     }
-
 
     @Override
     public ListFileOrDirDto getDir(Optional<String> path) throws ConnectionException, SettingsNotValidException {
+        getCredentials();
+        validateCredentials();
+
         ListFileOrDirDto listFileOrDirDto = new ListFileOrDirDto();
         String parentPath = "/"; // must be refactor to prefs
         String finalPath;
@@ -64,8 +46,15 @@ public class FileServiceImpl implements FileService {
             finalPath = "/";
         }
 
+        Channel channel = null;
+
         try {
-            Vector<ChannelSftp.LsEntry> ls = sftpChannel.ls(finalPath);
+            Session session = Network.setupJsch(USERNAME, HOST, PASSWORD, PORT);
+            channel = session.openChannel("sftp");
+            channel.connect();
+            ChannelSftp channelSftp= (ChannelSftp) channel;
+
+            Vector<ChannelSftp.LsEntry> ls = channelSftp.ls(finalPath);
 
             ls.forEach(item -> {
                 if (item instanceof ChannelSftp.LsEntry) {
@@ -106,6 +95,10 @@ public class FileServiceImpl implements FileService {
         } catch (Exception e) {
             logger.error("Unexpected error occurred", e);
             throw new RuntimeException("Unexpected error", e);
+        } finally {
+            if (channel != null){
+                channel.disconnect();
+            }
         }
 
         return listFileOrDirDto;
@@ -113,10 +106,13 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public ListFileOrDirDto getBackDir(String path) throws ConnectionException, SettingsNotValidException {
+        getCredentials();
         validateCredentials();
+
         logger.debug("Current Path = {}", path);
         ListFileOrDirDto listFileOrDirDto = new ListFileOrDirDto();
         String parentPath;
+        Channel channel = null;
 
         try {
             if (path.equals("/") || path.equals("")) {
@@ -133,7 +129,12 @@ public class FileServiceImpl implements FileService {
             prefs.put("currentDirectory", parentPath);
             prefs.flush();
 
-            Vector<ChannelSftp.LsEntry> ls = sftpChannel.ls(parentPath);
+            Session session = Network.setupJsch(USERNAME, HOST, PASSWORD, PORT);
+            channel = session.openChannel("sftp");
+            channel.connect();
+            ChannelSftp channelSftp= (ChannelSftp) channel;
+
+            Vector<ChannelSftp.LsEntry> ls = channelSftp.ls(parentPath);
 
             String finalParentPath = parentPath;
             ls.forEach(item -> {
@@ -172,6 +173,10 @@ public class FileServiceImpl implements FileService {
         } catch (Exception e) {
             logger.error("Unexpected error occurred", e);
             throw new RuntimeException("Unexpected error", e);
+        } finally {
+            if (channel != null){
+                channel.disconnect();
+            }
         }
 
         return listFileOrDirDto;
@@ -179,18 +184,25 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public ListFileOrDirDto getNextDir(String path) throws ConnectionException, SettingsNotValidException {
+        getCredentials();
         validateCredentials();
+
         ListFileOrDirDto listFileOrDirDto = new ListFileOrDirDto();
         String parentPath;
+        Channel channel = null;
         try {
-
             if (path.equals("/")) {
                 parentPath = "/";
             } else {
                 parentPath = path.substring(0, path.lastIndexOf("/"));
             }
 
-            Vector<ChannelSftp.LsEntry> ls = sftpChannel.ls(path);
+            Session session = Network.setupJsch(USERNAME, HOST, PASSWORD, PORT);
+            channel = session.openChannel("sftp");
+            channel.connect();
+            ChannelSftp channelSftp= (ChannelSftp) channel;
+
+            Vector<ChannelSftp.LsEntry> ls = channelSftp.ls(path);
 
             ls.forEach(item -> {
                 if (item instanceof ChannelSftp.LsEntry) {
@@ -232,6 +244,10 @@ public class FileServiceImpl implements FileService {
         } catch (Exception e) {
             logger.error("Unexpected error occurred", e);
             throw new RuntimeException("Unexpected error", e);
+        } finally {
+            if (channel != null){
+                channel.disconnect();
+            }
         }
 
         return listFileOrDirDto;
@@ -244,8 +260,18 @@ public class FileServiceImpl implements FileService {
 
 
     private void validateCredentials() throws SettingsNotValidException {
-        if (this.HOST.isEmpty() || this.USERNAME.isEmpty() || this.PASSWORD.isEmpty() || this.LOG_FILE_PATH.isEmpty() || this.PORT == 0) {
+        if (this.HOST.isEmpty() || this.USERNAME.isEmpty() || this.PASSWORD.isEmpty() || this.PORT == 0) {
             throw new SettingsNotValidException("Please set your credentials first, then try again.");
         }
+    }
+
+    private void getCredentials(){
+        SettingsService settingsService = new SettingsServiceImpl();
+        CredentialsDto credentials = settingsService.getCredentials();
+        LOG_FILE_PATH = credentials.getLog().getDirectory();
+        HOST = credentials.getSftp().getRemoteHost();
+        USERNAME = credentials.getSftp().getUsername();
+        PASSWORD = credentials.getSftp().getPassword();
+        PORT = Integer.parseInt(credentials.getSftp().getPort());
     }
 }

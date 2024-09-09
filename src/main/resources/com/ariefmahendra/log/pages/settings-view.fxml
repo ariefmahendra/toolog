@@ -22,12 +22,13 @@
                   <Label layoutX="62.0" layoutY="130.0" text="Password" AnchorPane.leftAnchor="63.2" />
                   <TextField fx:id="passwordTxt" layoutX="164.0" layoutY="126.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
                   <Label layoutX="61.0" layoutY="166.0" text="Port" AnchorPane.leftAnchor="63.2" />
-                  <Label layoutX="63.0" layoutY="200.0" text="Default Folder" AnchorPane.leftAnchor="63.0" />
-                  <TextField fx:id="defaultFolderTxt" layoutX="164.0" layoutY="197.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
+                  <Label layoutX="63.0" layoutY="200.0" text="Default Filer" AnchorPane.leftAnchor="63.0" />
+                  <TextField fx:id="defaultFileTxt" layoutX="164.0" layoutY="197.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
                   <TextField fx:id="portTxt" layoutX="164.0" layoutY="162.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
                   <Label layoutX="61.0" layoutY="240.0" text="Buffer Size" />
                   <Button fx:id="saveSettingsBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="462.0" layoutY="276.0" mnemonicParsing="false" onAction="#saveCredentials" prefHeight="30.0" prefWidth="75.0" styleClass="save-btn-settings" stylesheets="@../assets/css/style.css" text="Simpan" textAlignment="CENTER" AnchorPane.rightAnchor="62.799999999999955" AnchorPane.topAnchor="276.0" />
                   <TextField fx:id="bufferSizeTxt" layoutX="164.0" layoutY="236.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
+                  <Button fx:id="connectBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="386.0" layoutY="276.0" mnemonicParsing="false" onAction="#connectSftp" prefHeight="30.0" prefWidth="75.0" styleClass="save-btn-settings" stylesheets="@../assets/css/style.css" text="connect" textAlignment="CENTER" />
                </children>
             </AnchorPane>
          </center>
