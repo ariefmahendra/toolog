@@ -1,17 +1,19 @@
 package com.ariefmahendra.log.controller;
 
+import com.ariefmahendra.log.GUI;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class MainController {
     public StackPane contentArea;
@@ -34,7 +36,10 @@ public class MainController {
             Parent root = loader.load();
 
             // Create a new stage (window)
+            String iconPath = "/com/ariefmahendra/log/assets/icon/iconApp.png";
+            Image appIcon = new Image(Objects.requireNonNull(GUI.class.getResourceAsStream(iconPath)));
             Stage settingsStage = new Stage();
+            settingsStage.getIcons().add(appIcon);
             settingsStage.setTitle("Settings");
 
             // Set the scene with the loaded FXML root
@@ -62,6 +67,7 @@ public class MainController {
 
             // Clear existing children and add the new root node
             if (contentArea != null){
+                contentArea.getChildren().clear();
                 contentArea.getChildren().add(root);
             }
 
@@ -77,17 +83,17 @@ public class MainController {
     }
 
 
-    private void showSearch(){
+    public void showSearch(){
         FXMLLoader searchPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/search-view.fxml"));
         loadChildren(searchPage);
     }
 
-    private void showLatest(){
+    public void showLatest(){
         FXMLLoader latestPage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/latest-view.fxml"));
         loadChildren(latestPage);
     }
 
-    private void showDirectory(){
+    public void showDirectory(){
         FXMLLoader filePage = new FXMLLoader(getClass().getResource("/com/ariefmahendra/log/pages/file-view.fxml"));
         loadChildren(filePage);
     }

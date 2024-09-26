@@ -11,6 +11,7 @@ import com.jcraft.jsch.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -28,7 +29,6 @@ public class FileServiceImpl implements FileService {
     private static final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
     public FileServiceImpl() {
-        // currentDirectory = Preferences.userNodeForPackage(FileServiceImpl.class).get("currentDirectory", "/");
         currentDirectory = "/";
     }
 
@@ -63,10 +63,13 @@ public class FileServiceImpl implements FileService {
                     long timestamp = lsEntry.getAttrs().getMTime() * 1000L;
                     Date modificationDate = new Date(timestamp);
 
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String formattedDate = dateFormat.format(modificationDate);
+
                     if (lsEntry.getAttrs().isDir()) {
                         DirectoryModel directoryModel = new DirectoryModel();
                         directoryModel.setDirectory(finalPath + lsEntry.getFilename());
-                        directoryModel.setDate(modificationDate);
+                        directoryModel.setDate(formattedDate);
                         directoryModel.setSize(lsEntry.getAttrs().getSize());
                         listFileOrDirDto.getDirectories().add(directoryModel);
                     } else {
@@ -74,7 +77,7 @@ public class FileServiceImpl implements FileService {
                         fileModel.setName(lsEntry.getFilename());
                         fileModel.setDirectory(finalPath);
                         fileModel.setSize(lsEntry.getAttrs().getSize());
-                        fileModel.setDate(modificationDate);
+                        fileModel.setDate(formattedDate);
                         listFileOrDirDto.getFiles().add(fileModel);
                     }
                 }
@@ -87,13 +90,13 @@ public class FileServiceImpl implements FileService {
             prefs.flush();
 
         } catch (SftpException e) {
-            logger.error("Failed to connect or interact with SFTP server", e);
-            throw new ConnectionException("Connection to SFTP server error", e);
-        } catch (BackingStoreException e) {
-            logger.error("Failed to save preferences", e);
+            throw new ConnectionException(e.getMessage(), e);
+        } catch (JSchException e){
+            throw new ConnectionException(e.getMessage(), e);
+        }
+        catch (BackingStoreException e) {
             throw new RuntimeException("Error saving preferences", e);
         } catch (Exception e) {
-            logger.error("Unexpected error occurred", e);
             throw new RuntimeException("Unexpected error", e);
         } finally {
             if (channel != null){
@@ -144,12 +147,15 @@ public class FileServiceImpl implements FileService {
                     long timestamp = lsEntry.getAttrs().getMTime() * 1000L;
                     Date modificationDate = new Date(timestamp);
 
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String formattedDate = dateFormat.format(modificationDate);
+
                     String finalPath = finalParentPath.endsWith("/") ? finalParentPath + lsEntry.getFilename() : finalParentPath + "/" + lsEntry.getFilename();
 
                     if (lsEntry.getAttrs().isDir()) {
                         DirectoryModel directoryModel = new DirectoryModel();
                         directoryModel.setDirectory(finalPath);
-                        directoryModel.setDate(modificationDate);
+                        directoryModel.setDate(formattedDate);
                         directoryModel.setSize(lsEntry.getAttrs().getSize());
                         listFileOrDirDto.getDirectories().add(directoryModel);
                     } else {
@@ -157,7 +163,7 @@ public class FileServiceImpl implements FileService {
                         fileModel.setName(lsEntry.getFilename());
                         fileModel.setDirectory(finalParentPath);
                         fileModel.setSize(lsEntry.getAttrs().getSize());
-                        fileModel.setDate(modificationDate);
+                        fileModel.setDate(formattedDate);
                         listFileOrDirDto.getFiles().add(fileModel);
                     }
                 }
@@ -165,13 +171,10 @@ public class FileServiceImpl implements FileService {
 
             listFileOrDirDto.setParentPath(parentPath);
         } catch (SftpException e) {
-            logger.error("Failed to connect or interact with SFTP server", e);
-            throw new ConnectionException("Connection to SFTP server error", e);
+            throw new ConnectionException(e.getMessage(), e);
         } catch (BackingStoreException e) {
-            logger.error("Failed to save preferences", e);
             throw new RuntimeException("Error saving preferences", e);
         } catch (Exception e) {
-            logger.error("Unexpected error occurred", e);
             throw new RuntimeException("Unexpected error", e);
         } finally {
             if (channel != null){
@@ -212,10 +215,13 @@ public class FileServiceImpl implements FileService {
                     long timestamp = lsEntry.getAttrs().getMTime() * 1000L;
                     Date modificationDate = new Date(timestamp);
 
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String formattedDate = dateFormat.format(modificationDate);
+
                     if (lsEntry.getAttrs().isDir()) {
                         DirectoryModel directoryModel = new DirectoryModel();
                         directoryModel.setDirectory(path + lsEntry.getFilename());
-                        directoryModel.setDate(modificationDate);
+                        directoryModel.setDate(formattedDate);
                         directoryModel.setSize(lsEntry.getAttrs().getSize());
                         listFileOrDirDto.getDirectories().add(directoryModel);
                     } else {
@@ -223,7 +229,7 @@ public class FileServiceImpl implements FileService {
                         fileModel.setName(lsEntry.getFilename());
                         fileModel.setDirectory(path);
                         fileModel.setSize(lsEntry.getAttrs().getSize());
-                        fileModel.setDate(modificationDate);
+                        fileModel.setDate(formattedDate);
                         listFileOrDirDto.getFiles().add(fileModel);
                     }
                 }
@@ -234,15 +240,14 @@ public class FileServiceImpl implements FileService {
             Preferences prefs = Preferences.userNodeForPackage(FileServiceImpl.class);
             prefs.put("currentDirectory", path);
             prefs.flush();
-
         } catch (SftpException e) {
-            logger.error("Failed to connect or interact with SFTP server", e);
-            throw new ConnectionException("Connection to SFTP server error", e);
+            logger.error("Failed to connect or interact with SFTP server");
+            throw new ConnectionException(e.getMessage(), e);
         } catch (BackingStoreException e) {
-            logger.error("Failed to save preferences", e);
+            logger.error("Failed to save preferences");
             throw new RuntimeException("Error saving preferences", e);
         } catch (Exception e) {
-            logger.error("Unexpected error occurred", e);
+            logger.error("Unexpected error occurred");
             throw new RuntimeException("Unexpected error", e);
         } finally {
             if (channel != null){
@@ -252,12 +257,6 @@ public class FileServiceImpl implements FileService {
 
         return listFileOrDirDto;
     }
-
-    @Override
-    public void setFileToDefaultFolder(FileModel fileModel) throws SettingsNotValidException {
-        validateCredentials();
-    }
-
 
     private void validateCredentials() throws SettingsNotValidException {
         if (this.HOST.isEmpty() || this.USERNAME.isEmpty() || this.PASSWORD.isEmpty() || this.PORT == 0) {

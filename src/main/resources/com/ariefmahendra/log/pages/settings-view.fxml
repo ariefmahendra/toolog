@@ -1,37 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="content" stylesheets="@../assets/css/style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ariefmahendra.log.controller.SettingsController">
+<AnchorPane prefHeight="350.0" prefWidth="576.0" styleClass="content" stylesheets="@../assets/css/style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ariefmahendra.log.controller.SettingsController">
     <children>
-        <BorderPane prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <top>
-                <Label styleClass="label-title" text="Settings" BorderPane.alignment="CENTER" />
-            </top>
+        <BorderPane layoutY="-0.8" prefHeight="350.0" prefWidth="576.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
          <center>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="270.0" prefWidth="576.0" BorderPane.alignment="CENTER">
                <children>
                   <Label layoutX="62.0" layoutY="54.0" text="Host" AnchorPane.leftAnchor="63.2" AnchorPane.topAnchor="54.0" />
                   <TextField fx:id="hostTxt" layoutX="164.0" layoutY="50.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" AnchorPane.topAnchor="50.0" />
                   <Label layoutX="62.0" layoutY="94.0" text="Username" AnchorPane.leftAnchor="63.2" />
                   <TextField fx:id="usernameTxt" layoutX="164.0" layoutY="90.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
                   <Label layoutX="62.0" layoutY="130.0" text="Password" AnchorPane.leftAnchor="63.2" />
-                  <TextField fx:id="passwordTxt" layoutX="164.0" layoutY="126.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
+                  <PasswordField fx:id="passwordTxt" layoutX="164.0" layoutY="126.0" prefHeight="26.0" prefWidth="350.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
                   <Label layoutX="61.0" layoutY="166.0" text="Port" AnchorPane.leftAnchor="63.2" />
                   <Label layoutX="63.0" layoutY="200.0" text="Default Filer" AnchorPane.leftAnchor="63.0" />
                   <TextField fx:id="defaultFileTxt" layoutX="164.0" layoutY="197.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
                   <TextField fx:id="portTxt" layoutX="164.0" layoutY="162.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
                   <Label layoutX="61.0" layoutY="240.0" text="Buffer Size" />
-                  <Button fx:id="saveSettingsBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="462.0" layoutY="276.0" mnemonicParsing="false" onAction="#saveCredentials" prefHeight="30.0" prefWidth="75.0" styleClass="save-btn-settings" stylesheets="@../assets/css/style.css" text="Simpan" textAlignment="CENTER" AnchorPane.rightAnchor="62.799999999999955" AnchorPane.topAnchor="276.0" />
                   <TextField fx:id="bufferSizeTxt" layoutX="164.0" layoutY="236.0" prefHeight="26.0" prefWidth="374.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="61.60000000000002" />
-                  <Button fx:id="connectBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="386.0" layoutY="276.0" mnemonicParsing="false" onAction="#connectSftp" prefHeight="30.0" prefWidth="75.0" styleClass="save-btn-settings" stylesheets="@../assets/css/style.css" text="connect" textAlignment="CENTER" />
                </children>
             </AnchorPane>
          </center>
+         <bottom>
+            <HBox alignment="CENTER_RIGHT" prefHeight="38.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="resetBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#resetCredentials" prefHeight="30.0" prefWidth="50.0" styleClass="save-btn-settings" stylesheets="@../assets/css/style.css" text="Reset" textAlignment="CENTER" />
+                  <Button fx:id="connectBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#connectSftp" prefHeight="30.0" prefWidth="67.0" styleClass="save-btn-settings" stylesheets="@../assets/css/style.css" text="Connect" textAlignment="CENTER" />
+                  <Button fx:id="saveSettingsBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#saveCredentials" prefHeight="30.0" prefWidth="75.0" styleClass="save-btn-settings" stylesheets="@../assets/css/style.css" text="Simpan" textAlignment="CENTER" />
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="40.0" right="50.0" />
+               </BorderPane.margin>
+            </HBox>
+         </bottom>
         </BorderPane>
     </children>
 </AnchorPane>

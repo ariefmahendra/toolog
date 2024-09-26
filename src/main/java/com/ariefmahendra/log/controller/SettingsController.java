@@ -14,6 +14,8 @@ import javafx.scene.control.TextFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.prefs.BackingStoreException;
+
 public class SettingsController {
     public TextField hostTxt;
     public TextField usernameTxt;
@@ -23,6 +25,7 @@ public class SettingsController {
     public Button saveSettingsBtn;
     public TextField bufferSizeTxt;
     public Button connectBtn;
+    public Button resetBtn;
 
     private SettingsService settingsService;
     private static final Logger logger = LoggerFactory.getLogger(SettingsController.class);
@@ -65,10 +68,18 @@ public class SettingsController {
         LogModel logModel = new LogModel(defaultFolder, bufferSize);
         SftpModel sftpModel = new SftpModel(username, host, password, port);
 
-        settingsService.settingCredentials(logModel, sftpModel);
         try {
+            if (host.isEmpty() || port.isEmpty() || username.isEmpty() || password.isEmpty() || bufferSize.isEmpty()){
+                Alert failedAlert = new Alert(Alert.AlertType.ERROR, "Please fill all fields");
+                failedAlert.showAndWait();
+                return;
+            }
+
             Network.resetSession();
             Network.setupJsch(usernameTxt.getText(), hostTxt.getText(), passwordTxt.getText(), Integer.parseInt(portTxt.getText()));
+            settingsService.settingCredentials(logModel, sftpModel);
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION, "Success save credentials");
+            successAlert.showAndWait();
         } catch (Exception e){
             Alert failedAlert = new Alert(Alert.AlertType.ERROR, "Can't connect server");
             failedAlert.showAndWait();
@@ -78,6 +89,11 @@ public class SettingsController {
 
     public void connectSftp(ActionEvent actionEvent) {
         try {
+            if (usernameTxt.getText().isEmpty() || hostTxt.getText().isEmpty() || passwordTxt.getText().isEmpty() || portTxt.getText().isEmpty()){
+                Alert failedAlert = new Alert(Alert.AlertType.ERROR, "Please fill all fields");
+                failedAlert.showAndWait();
+                return;
+            }
             Network.resetSession();
             Network.setupJsch(usernameTxt.getText(), hostTxt.getText(), passwordTxt.getText(), Integer.parseInt(portTxt.getText()));
             if (Network.isConnected()){
@@ -91,6 +107,19 @@ public class SettingsController {
             Alert failedAlert = new Alert(Alert.AlertType.ERROR, "Can't connect server");
             failedAlert.showAndWait();
             e.printStackTrace();
+        }
+    }
+
+    public void resetCredentials(ActionEvent actionEvent) {
+        try {
+            settingsService.resetCredentials();
+            initialize();
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION, "Success reset credentials");
+            successAlert.showAndWait();
+        } catch (BackingStoreException e){
+            logger.error(e.getMessage(), e);
+            Alert failedAlert = new Alert(Alert.AlertType.ERROR, "Can't reset credentials");
+            failedAlert.showAndWait();
         }
     }
 }

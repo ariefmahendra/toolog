@@ -45,42 +45,65 @@
                   </BorderPane>
                </center>
                <top>
-                  <HBox alignment="TOP_RIGHT" prefHeight="31.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-                     <children>
-                        <TextField fx:id="fileNameTxt" styleClass="search-text-field" stylesheets="@../assets/css/style.css" />
-                        <Button fx:id="printButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#printLatestLog" styleClass="clear-button" text="Show">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../assets/icon/paper.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="wrapButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#wrapLog" styleClass="clear-button" text="Wrap">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../assets/icon/wrap.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="clearButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#clearLog" styleClass="clear-button" text="Clear">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../assets/icon/clear.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                     </children>
+                  <BorderPane prefHeight="0.0" prefWidth="610.0" BorderPane.alignment="CENTER">
+                     <right>
+                        <HBox alignment="TOP_RIGHT" prefHeight="28.0" prefWidth="231.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button fx:id="printButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#printLatestLog" styleClass="clear-button" text="Show">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../assets/icon/paper.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="wrapButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#wrapLog" styleClass="clear-button" text="Wrap">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../assets/icon/wrap.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="clearButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#clearLog" styleClass="clear-button" text="Clear">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../assets/icon/clear.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                           <BorderPane.margin>
+                              <Insets right="10.0" top="10.0" />
+                           </BorderPane.margin>
+                        </HBox>
+                     </right>
+                     <left>
+                        <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0" styleClass="search-panel" BorderPane.alignment="CENTER">
+                           <children>
+                              <TextField fx:id="fileNameTxt" alignment="CENTER" editable="false" prefHeight="26.0" prefWidth="317.0" promptText="File Name" styleClass="search-text-field">
+                              </TextField>
+                           </children>
+                           <BorderPane.margin>
+                              <Insets left="10.0" top="10.0" />
+                           </BorderPane.margin>
+                        </HBox>
+                     </left>
                      <BorderPane.margin>
-                        <Insets right="10.0" top="10.0" />
+                        <Insets right="10.0" />
                      </BorderPane.margin>
-                  </HBox>
+                  </BorderPane>
                </top>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
             </BorderPane>
          </center>
       </BorderPane>

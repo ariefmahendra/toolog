@@ -22,9 +22,10 @@
                         <ProgressIndicator fx:id="progressIndicator" prefHeight="47.0" prefWidth="44.0" />
                         <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0">
                           <columns>
-                            <TableColumn fx:id="typeCol" prefWidth="75.0" text="Type" />
-                            <TableColumn fx:id="nameCol" prefWidth="75.0" text="Name" />
+                              <TableColumn fx:id="typeCol" prefWidth="75.0" text="Type" />
+                              <TableColumn fx:id="nameCol" prefWidth="75.0" text="Name" />
                               <TableColumn fx:id="dirCol" prefWidth="75.0" text="Directory" />
+                              <TableColumn fx:id="sizeCol" prefWidth="75.0" text="Size" />
                               <TableColumn fx:id="dateCol" prefWidth="75.0" text="Date" />
                           </columns>
                            <columnResizePolicy>
@@ -39,8 +40,8 @@
          <top>
             <AnchorPane prefHeight="38.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="sortingBtn" layoutX="534.0" layoutY="7.0" mnemonicParsing="false" text="Sorting by Date" AnchorPane.rightAnchor="10.0" />
                   <Button fx:id="backBtn" layoutX="14.0" layoutY="9.0" mnemonicParsing="false" text="Back" AnchorPane.leftAnchor="10.0" />
+                  <Button fx:id="refreshBtn" layoutX="54.0" layoutY="9.0" mnemonicParsing="false" text="Refresh" AnchorPane.leftAnchor="54.0" />
                </children>
             </AnchorPane>
          </top></BorderPane>

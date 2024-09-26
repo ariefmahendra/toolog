@@ -5,10 +5,7 @@ import com.ariefmahendra.log.exceptions.ConnectionException;
 import com.ariefmahendra.log.exceptions.GeneralException;
 import com.ariefmahendra.log.service.SettingsService;
 import com.ariefmahendra.log.service.SettingsServiceImpl;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.*;
 import org.slf4j.Logger;
 
 import java.io.*;
@@ -23,113 +20,97 @@ public class Downloader {
     private static final int THREAD_COUNT = 6;
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(Downloader.class);
 
-    public static void downloadFileByThread(String filePathServer, String pathDownloaded) throws ConnectionException {
-        ChannelSftp sftpChannel = null;
+    public static void downloadFileByThread(String filePathServer, String pathDownloaded) throws ConnectionException, GeneralException {
         Session session = null;
 
         logger.info("Starting download file");
         try {
             session = connectSftp();
-            sftpChannel = (ChannelSftp) session.openChannel("sftp");
-            sftpChannel.connect();
 
-            // get file size
-            long remoteFileSize = sftpChannel.lstat(filePathServer).getSize();
-            File localFile = new File(pathDownloaded);
-            long localFileSize = localFile.exists() ? localFile.length() : 0;
+                ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");
+                sftpChannel.connect();
 
-            if (localFileSize == remoteFileSize) {
-                logger.info("File already downloaded, Skipping download");
-                return;
-            }
+                // Get file size
+                long remoteFileSize = sftpChannel.lstat(filePathServer).getSize();
+                File localFile = new File(pathDownloaded);
+                long localFileSize = localFile.exists() ? localFile.length() : 0;
 
-            // calculate chunk size
-            long chunkSize = remoteFileSize / THREAD_COUNT;
-
-            if (remoteFileSize < localFileSize){
-                boolean isDeleted = localFile.delete();
-                if (!isDeleted) {
-                   throw new GeneralException("Failed to delete local file");
+                if (localFileSize == remoteFileSize) {
+                    logger.info("File already downloaded, skipping download.");
+                    return;
                 }
-            }
 
-            // executor service to manage file
-            ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
-            List<Future<Void>> futures = new ArrayList<>();
+                // Calculate chunk size
+                long chunkSize = remoteFileSize / THREAD_COUNT;
 
-            // schedule task for each thread
-            for (int i = 0; i < THREAD_COUNT; i++){
-                final int threadIndex = i;
-                Future<Void> future = executor.submit(() -> {
-                    long startOffset = 0;
-                    long endOffset = 0;
-
-                    if (remoteFileSize > localFileSize) {
-                        startOffset = localFileSize + (threadIndex * chunkSize);
-                        endOffset = (threadIndex == (THREAD_COUNT - 1)) ? remoteFileSize : (startOffset + chunkSize);
+                if (localFileSize > remoteFileSize) {
+                    boolean isDeleted = localFile.delete();
+                    if (!isDeleted) {
+                        throw new GeneralException("Failed to delete local file");
                     }
-
-                    if (remoteFileSize < localFileSize) {
-                        startOffset =(threadIndex * chunkSize);
-                        endOffset = (threadIndex == (THREAD_COUNT - 1)) ? remoteFileSize : (startOffset + chunkSize);
-                    }
-
-                    // download chunk
-                    Downloader.downloadChunk(startOffset, endOffset, pathDownloaded + ".part" + threadIndex, filePathServer);
-                    return null;
-                });
-
-                futures.add(future);
-            }
-
-            // wait for all thread to complete
-            for (Future<Void> future : futures) {
-                try {
-                    future.get();
-                } catch (Exception e){
-                    throw new Exception(e);
+                    localFileSize = 0;
                 }
-            }
 
-            executor.shutdown();
+                ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+                List<Future<Void>> futures = new ArrayList<>();
 
-            // merge chunks into the final file
-            try (FileOutputStream fos = new FileOutputStream(pathDownloaded, true)) {
-                for (int i = 0; i < THREAD_COUNT; i++){
-                    try (RandomAccessFile raf = new RandomAccessFile(pathDownloaded + ".part" + i, "r")) {
-                        byte[] buffer = new byte[4096];
-                        int bytesRead;
-                        while ((bytesRead = raf.read(buffer)) != -1) {
-                            fos.write(buffer, 0, bytesRead);
+                for (int i = 0; i < THREAD_COUNT; i++) {
+                    final int threadIndex = i;
+                    Future<Void> future = executor.submit(() -> {
+                        long startOffset = threadIndex * chunkSize;
+                        long endOffset = (threadIndex == (THREAD_COUNT - 1)) ? remoteFileSize : (startOffset + chunkSize);
+
+                        try {
+                            downloadChunk(startOffset, endOffset, pathDownloaded + ".part" + threadIndex, filePathServer);
+                        } catch (Exception e) {
+                            logger.error("Failed to download chunk: {}", threadIndex, e);
+                            throw new RuntimeException(e);
+                        }
+                        return null;
+                    });
+
+                    futures.add(future);
+                }
+
+                for (Future<Void> future : futures) {
+                    try {
+                        future.get();
+                    } catch (Exception e) {
+                        throw new GeneralException("Error during file download");
+                    }
+                }
+
+                executor.shutdown();
+
+                try (FileOutputStream fos = new FileOutputStream(pathDownloaded)) {
+                    for (int i = 0; i < THREAD_COUNT; i++) {
+                        File chunkFile = new File(pathDownloaded + ".part" + i);
+                        try (RandomAccessFile raf = new RandomAccessFile(chunkFile, "r")) {
+                            byte[] buffer = new byte[4096];
+                            int bytesRead;
+                            while ((bytesRead = raf.read(buffer)) != -1) {
+                                fos.write(buffer, 0, bytesRead);
+                            }
+                        }
+                        boolean deleted = chunkFile.delete();
+                        if (!deleted) {
+                            logger.warn("Failed to delete chunk file: {}.part{}", pathDownloaded, i);
                         }
                     }
                 }
-            }
 
-            // delete chunks
-            for (int i = 0; i < THREAD_COUNT; i++){
-                boolean delete = new File(pathDownloaded + ".part" + i).delete();
-                if (!delete) {
-                    logger.info("Failed to delete file: {}.part{}", pathDownloaded, i);
-                }
-            }
-
-            logger.info("File downloaded successfully: {}", pathDownloaded);
+                logger.info("File downloaded successfully: {}", pathDownloaded);
         } catch (SftpException e) {
             logger.error("Failed to connect or interact with SFTP server", e);
-            throw new ConnectionException("Connection to sftp server error", e);
-        } catch (JSchException e){
+            throw new ConnectionException("Connection to SFTP server error", e);
+        } catch (JSchException e) {
             logger.error("Failed to connect to SFTP server", e);
             throw new ConnectionException("Connection Error", e);
         } catch (Exception e) {
-            logger.error("Failed to read the log file", e);
-            throw new RuntimeException("Error reading log file", e);
+            logger.error("Failed to download the file", e);
+            throw new GeneralException("Error during file download");
         } finally {
-            if (sftpChannel != null){
-                sftpChannel.disconnect();
-            }
-
-            if (session != null){
+            if (session != null) {
                 session.disconnect();
             }
         }
@@ -144,18 +125,10 @@ public class Downloader {
             File chunkFile = new File(chunkFilePath);
             // Ensure the directory exists
             File parentDir = chunkFile.getParentFile();
-            if (!parentDir.exists()) {
+            if (parentDir != null && !parentDir.exists()) {
                 boolean dirCreated = parentDir.mkdirs();
                 if (!dirCreated) {
                     throw new RuntimeException("Failed to create directories: " + parentDir.getAbsolutePath());
-                }
-            }
-
-            // Create the file if it does not exist
-            if (!chunkFile.exists()) {
-                boolean newFile = chunkFile.createNewFile();
-                if (!newFile) {
-                    throw new RuntimeException("Failed to create file: " + chunkFilePath);
                 }
             }
 
@@ -171,29 +144,32 @@ public class Downloader {
                     bytesRead += len;
                 }
             } catch (SftpException e) {
-                logger.error("Failed to connect or interact with SFTP server", e);
-                throw new ConnectionException("Connection to sftp server error", e);
+                logger.error("Failed to interact with SFTP server during chunk download", e);
+                throw new ConnectionException("Error during chunk download", e);
             } catch (IOException e) {
-                logger.error("Failed to read the log file", e);
-                throw new RuntimeException("Error reading log file", e);
+                logger.error("Failed to read/write during chunk download", e);
+                throw new RuntimeException("Error reading/writing chunk", e);
             } finally {
                 sftpChannel.disconnect();
-                session.disconnect();
             }
         } catch (Exception e) {
-            throw new GeneralException(e.getMessage());
+            throw new GeneralException("Error during chunk download: " + e.getMessage());
         }
     }
 
     private static Session connectSftp() throws JSchException {
         SettingsService settingsService = new SettingsServiceImpl();
         CredentialsDto credentials = settingsService.getCredentials();
+        String username = credentials.getSftp().getUsername();
+        String remoteHost = credentials.getSftp().getRemoteHost();
+        String password = credentials.getSftp().getPassword();
+        int port = Integer.parseInt(credentials.getSftp().getPort());
 
-        return Network.setupJsch(
-                credentials.getSftp().getUsername(),
-                credentials.getSftp().getRemoteHost(),
-                credentials.getSftp().getPassword(),
-                Integer.parseInt(credentials.getSftp().getPort())
-        );
+        JSch jsch = new JSch();
+        Session session = jsch.getSession(username, remoteHost, port);
+        session.setPassword(password);
+        session.setConfig("StrictHostKeyChecking","no");
+        session.connect();
+        return session;
     }
 }

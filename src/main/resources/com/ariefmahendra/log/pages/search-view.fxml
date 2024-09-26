@@ -22,7 +22,7 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="38.0" prefWidth="338.0" styleClass="search-panel">
                      <children>
-                        <TextField fx:id="keyTxt" alignment="TOP_CENTER" prefHeight="25.0" prefWidth="267.0" promptText="Keywoard" styleClass="search-text-field" />
+                        <TextField fx:id="keyTxt" alignment="TOP_CENTER" prefHeight="25.0" prefWidth="267.0" promptText="Keyword" styleClass="search-text-field" />
                         <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#searchLog" styleClass="search-button">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -72,31 +72,42 @@
                   </BorderPane>
                </center>
                <top>
-                  <HBox alignment="TOP_RIGHT" prefHeight="31.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-                     <children>
-                        <Button fx:id="wrapButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#wrapLog" styleClass="clear-button" text="Wrap">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../assets/icon/wrap.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="clearButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#clearLog" styleClass="clear-button" text="Clear">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../assets/icon/clear.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                     </children>
+                  <BorderPane prefHeight="7.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+                     <right>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="31.0" prefWidth="141.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button fx:id="wrapButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#wrapLog" styleClass="clear-button" text="Wrap">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../assets/icon/wrap.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="clearButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#clearLog" styleClass="clear-button" text="Clear">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../assets/icon/clear.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </right>
+                     <left>
+                        <HBox alignment="CENTER" prefHeight="32.0" prefWidth="300.0" styleClass="search-panel" BorderPane.alignment="CENTER">
+                           <children>
+                              <TextField fx:id="fileNameTxt" alignment="CENTER" editable="false" prefHeight="26.0" prefWidth="317.0" promptText="File Name" styleClass="search-text-field" />
+                           </children>
+                        </HBox>
+                     </left>
                      <BorderPane.margin>
-                        <Insets right="10.0" />
+                        <Insets left="10.0" right="10.0" />
                      </BorderPane.margin>
-                  </HBox>
+                  </BorderPane>
                </top>
             </BorderPane>
          </center></BorderPane>

@@ -1,18 +1,40 @@
 package com.ariefmahendra.log.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.Date;
-
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class DirectoryModel {
+    public String getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(String directory) {
+        this.directory = directory;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public DirectoryModel(String directory, String date, long size) {
+        this.directory = directory;
+        this.date = date;
+        this.size = size;
+    }
+
+    public DirectoryModel() {
+    }
+
     private String directory;
-    private Date date;
+    private String date;
     private long size;
 }

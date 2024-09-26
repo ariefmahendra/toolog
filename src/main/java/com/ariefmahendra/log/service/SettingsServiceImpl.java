@@ -4,6 +4,7 @@ import com.ariefmahendra.log.shared.dto.CredentialsDto;
 import com.ariefmahendra.log.model.LogModel;
 import com.ariefmahendra.log.model.SftpModel;
 
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class SettingsServiceImpl implements SettingsService{
@@ -23,7 +24,7 @@ public class SettingsServiceImpl implements SettingsService{
 
         Preferences logPreferences = Preferences.userNodeForPackage(LogModel.class);
         String logDirectory = logPreferences.get("defaultFile", "");
-        String bufferSize = logPreferences.get("bufferSize", "400000");
+        String bufferSize = logPreferences.get("bufferSize", "1000");
 
         Preferences sftpPreferences = Preferences.userNodeForPackage(SftpModel.class);
         String username = sftpPreferences.get("username", "");
@@ -44,5 +45,11 @@ public class SettingsServiceImpl implements SettingsService{
         credentialsDto.setLog(log);
         credentialsDto.setSftp(sftp);
         return credentialsDto;
+    }
+
+    @Override
+    public void resetCredentials() throws BackingStoreException {
+        Preferences.userNodeForPackage(LogModel.class).clear();
+        Preferences.userNodeForPackage(SftpModel.class).clear();
     }
 }
